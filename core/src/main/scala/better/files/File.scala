@@ -233,8 +233,8 @@ class File(private[this] val _path: Path) {
 
   def isHidden: Boolean = Files.isHidden(path)
 
-  def list = AutoClosingStream(Files.list(path))
-  def children = list
+  def list = FilesStream(path)
+  def children = list 
   def entries = list
 
   def listRecursively(implicit visitOptions: File.VisitOptions = File.VisitOptions.default): Files = walk()(visitOptions).filterNot(isSamePathAs)
