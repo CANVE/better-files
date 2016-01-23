@@ -13,16 +13,16 @@ import com.sun.management.UnixOperatingSystemMXBean
  */
 object FilesStream extends {
   
-  def apply(path: java.nio.file.Path, trace: Boolean = false): Iterator[File] = {
+  def apply(path: java.nio.file.Path)(implicit trace: Boolean = false, audit: Boolean = true): Iterator[File] = {
     
     val jstream: JStream[java.nio.file.Path] = java.nio.file.Files.list(path)
-    StreamLeakAudit("open", path.toString, trace)
+    if (audit) StreamLeakAudit("open", path.toString, trace)
     
     val streamIterator = jstream.iterator
   
     def close() = {
       jstream.close
-      StreamLeakAudit("close", path.toString, trace)
+      if (audit) StreamLeakAudit("close", path.toString, trace)
     }
     
     def get: Option[File] = {
